@@ -82,7 +82,7 @@ struct MainPage {
         .height($r('app.float.btn_size'))
         .margin({ bottom: "96vp", right: $r('app.float.btn_margin') })
         .onClick(() => {
-          router.pushUrl({ url: Constants.NEWS_EDIT_PAGE });
+          router.pushUrl({ url: Constants.USER_INFO_PAGE });
         })
       Image($r('app.media.ic_add'))
         .width($r('app.float.btn_size'))
