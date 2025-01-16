@@ -75,7 +75,7 @@ export async function fetchUserProfile(): Promise<UserObj> {
 }
 
 export function loginService(username: string, password: string): Promise<void> {
-  const url = 'http://127.0.0.1:8080/api/users/login'; // TODO
+  const url = 'http://192.168.1.6:8080/api/users/login'; // TODO
 
   const httpRequest = http.createHttp();
   return httpRequest.request(url, {
@@ -119,7 +119,7 @@ export function registerService(username: string, password: string): Promise<voi
     username: username,
     password: password,
   };
-  const url = 'http://127.0.0.1:8080/api/users/register'; // TODO
+  const url = 'http://192.168.1.6:8080/api/users/register'; // TODO
 
   const httpRequest = http.createHttp();
   return httpRequest.request(url, {
