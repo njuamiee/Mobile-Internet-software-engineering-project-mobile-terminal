@@ -1,6 +1,8 @@
 import { GlobalContext } from '../../viewmodel/GlobalContext';
 import { http } from '@kit.NetworkKit';
 
+import {httpResult,registerResult,UserDto} from './HTTP';
+
 export interface UserObj {
   id: number,
   username: string;
@@ -16,31 +18,20 @@ export interface UserObj {
   createCommentList: number[];
 }
 
-interface UserDto {
-  username: string;
-  password: string;
-}
+
 
 /**
  * Fetches the user profile using HTTP POST request.
  * @returns A promise that resolves with the user profile data.
  */
-interface httpResult {
-  code: number;
-  msg: string;
-  data: UserObj;
-}
 
-interface registerResult {
-  code: number;
-  msg: string;
-  data: null;
-}
 
-export async function fetchUserProfile(): Promise<UserObj> {
+
+@Concurrent
+export  async function fetchUserProfile(): Promise<UserObj> {
   const userId = GlobalContext.getContext().getObject('id'); // 获取用户 ID
 
-  const url = 'https://192.168.40.1:8080/api/users'; // TODO
+  const url = 'https://192.168.1.6:8080/api/users'; // TODO
   const httpRequest = http.createHttp();
   const response = await httpRequest.request(url, {
     method: http.RequestMethod.POST,
@@ -79,13 +70,14 @@ export async function fetchUserProfile(): Promise<UserObj> {
   }
 }
 
-export function loginService(username: string, password: string): Promise<void> {
+@Concurrent
+export async  function loginService(username: string, password: string): Promise<void> {
   // 构建请求体
   const userDto: UserDto = {
     username: username,
     password: password,
   };
-  const url = 'http://192.168.40.1:8080/api/users/login'; // TODO
+  const url = 'http://192.168.1.6:8080/api/users/login'; // TODO
 
   const httpRequest = http.createHttp();
   return httpRequest.request(url, {
@@ -111,13 +103,14 @@ export function loginService(username: string, password: string): Promise<void> 
   });
 }
 
-export function registerService(username: string, password: string): Promise<void> {
+@Concurrent
+export async  function registerService(username: string, password: string): Promise<void> {
   // 构建请求体
   const userDto: UserDto = {
     username: username,
     password: password,
   };
-  const url = 'http://192.168.40.1:8080/api/users/register'; // TODO
+  const url = 'http://192.168.1.6:8080/api/users/register'; // TODO
 
   const httpRequest = http.createHttp();
   return httpRequest.request(url, {
@@ -139,3 +132,8 @@ export function registerService(username: string, password: string): Promise<voi
     // }
   });
 }
+
+
+
+
+

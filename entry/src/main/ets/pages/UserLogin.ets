@@ -1,6 +1,7 @@
 import { router } from '@kit.ArkUI';
 import { showToast } from '../common/utils/ToastUtil';
 import { loginService } from '../common/utils/UserService';
+import { taskpool } from '@kit.ArkTS';
 
 @Entry
 @Component
@@ -8,6 +9,18 @@ struct LoginPage {
   @State username: string = '';
   @State password: string = '';
   @State isLoggingIn: boolean = false;
+
+  taskpoolExecutelogin(username: string, password: string) {
+  taskpool.execute(loginService, username, password) .then(() => {
+    this.isLoggingIn = false;
+    showToast('登录成功');
+    router.replace({ url: 'pages/UserInfoPage' }); // 登录成功后跳转到用户个人信息页
+  })
+    .catch(() => {
+      this.isLoggingIn = false;
+      showToast('登录失败，请检查用户名和密码');
+    });
+}
 
   login() {
     if (!this.username || !this.password) {
@@ -17,16 +30,7 @@ struct LoginPage {
 
     this.isLoggingIn = true;
 
-    loginService(this.username, this.password)
-      .then(() => {
-        this.isLoggingIn = false;
-        showToast('登录成功');
-        router.replace({ url: 'pages/UserInfoPage' }); // 登录成功后跳转到用户个人信息页
-      })
-      .catch(() => {
-        this.isLoggingIn = false;
-        showToast('登录失败，请检查用户名和密码');
-      });
+    this.taskpoolExecutelogin(this.username, this.password);
   }
 
   build() {

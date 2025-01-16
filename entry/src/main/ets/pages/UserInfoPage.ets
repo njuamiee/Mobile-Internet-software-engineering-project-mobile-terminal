@@ -1,6 +1,7 @@
 import { router } from '@kit.ArkUI';
 import Constants from '../common/constants/Constants';
 import { fetchUserProfile, UserObj } from '../common/utils/UserService'; // 假设有一个服务获取用户数据
+import { taskpool } from '@kit.ArkTS';
 import { showToast } from '../common/utils/ToastUtil';
 
 /**
@@ -33,25 +34,31 @@ struct UserProfilePage {
     this.loadUserProfile();
   }
 
+  taskpoolExecutefetchUserProfile() {
+  taskpool.execute(fetchUserProfile).then((/*data : UserObj*/ result:object) => {
+    console.info("taskPoolTest task result: " + result);
+    /*
+    this.user = {
+      id: data.id,
+      username: data.username,
+      role: data.role,
+      imgURL: data.imgURL,
+      createTime: new Date(data.createTime).toLocaleString(),
+      followList: data.followList || [],
+      fansList: data.fansList || [],
+      likeNewsList: data.likeNewsList || [],
+      collectNewsList: data.collectNewsList || [],
+      createNewsList: data.createNewsList || [],
+      likeCommentList: data.likeCommentList || [],
+      createCommentList: data.createCommentList || [],
+    };*/
+  }).catch((err: string) => {
+    console.error("taskPoolTest test occur error: " + err);
+  });
+}
+
   loadUserProfile() {
-    fetchUserProfile().then((data : UserObj) => {
-      this.user = {
-        id: data.id,
-        username: data.username,
-        role: data.role,
-        imgURL: data.imgURL,
-        createTime: new Date(data.createTime).toLocaleString(),
-        followList: data.followList || [],
-        fansList: data.fansList || [],
-        likeNewsList: data.likeNewsList || [],
-        collectNewsList: data.collectNewsList || [],
-        createNewsList: data.createNewsList || [],
-        likeCommentList: data.likeCommentList || [],
-        createCommentList: data.createCommentList || [],
-      };
-    }).catch(() => {
-      showToast('Failed to load user profile.');
-    });
+    this.taskpoolExecutefetchUserProfile();
   }
 
   build() {

@@ -1,6 +1,7 @@
 import { router } from '@kit.ArkUI';
 import { showToast } from '../common/utils/ToastUtil';
 import { registerService } from '../common/utils/UserService'; // 假设有一个注册服务
+import { taskpool } from '@kit.ArkTS';
 
 @Entry
 @Component
@@ -9,6 +10,18 @@ struct RegisterPage {
   @State password: string = '';
   @State confirmPassword: string = '';
   @State isRegistering: boolean = false;
+
+ taskpoolExecuteregister(username: string, password: string) {
+  taskpool.execute(registerService, username, password).then(() => {
+    this.isRegistering = false;
+    showToast('注册成功');
+    router.back();
+  })
+    .catch(() => {
+      this.isRegistering = false;
+      showToast('注册失败，请重试');
+    });
+}
 
   register() {
     if (!this.username || !this.password || !this.confirmPassword) {
@@ -23,16 +36,8 @@ struct RegisterPage {
 
     this.isRegistering = true;
 
-    registerService(this.username, this.password)
-      .then(() => {
-        this.isRegistering = false;
-        showToast('注册成功');
-        router.back();
-      })
-      .catch(() => {
-        this.isRegistering = false;
-        showToast('注册失败，请重试');
-      });
+    this.taskpoolExecuteregister(this.username, this.password);
+
   }
 
   build() {
