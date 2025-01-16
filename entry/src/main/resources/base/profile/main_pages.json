@@ -2,6 +2,8 @@
   "src": [
     "pages/MainPage",
     "pages/NewsEditPage",
-    "pages/UserInfoPage"
+    "pages/UserInfoPage",
+    "pages/UserLogin",
+    "pages/UserRegister"
   ]
 }

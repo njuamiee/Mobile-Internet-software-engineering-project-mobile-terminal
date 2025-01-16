@@ -12,6 +12,21 @@ import { showToast } from '../common/utils/ToastUtil';
 @Component
 struct UserProfilePage {
   @State user: UserObj | null = null;
+  /* 打的桩:
+{
+    username: "123",
+    role: "hhh",
+    imgURL: "",
+    createTime: "2024-12-11",
+    followList: [],
+    fansList: [],
+    likeNewsList: [],
+    collectNewsList: [],
+    createNewsList: [],
+    likeCommentList: [],
+    createCommentList: []
+  }
+ */
 
   aboutToAppear() {
     this.loadUserProfile();
@@ -20,6 +35,7 @@ struct UserProfilePage {
   loadUserProfile() {
     fetchUserProfile().then((data : UserObj) => {
       this.user = {
+        id: data.id,
         username: data.username,
         role: data.role,
         imgURL: data.imgURL,
@@ -40,18 +56,26 @@ struct UserProfilePage {
   build() {
     if (!this.user) {
       Column() {
-        Text('Loading user profile...')
+        Text('请登录以查看您的个人信息')
           .fontSize(20)
           .fontWeight(FontWeight.Bold)
-          .margin({ top: 50 });
+          .margin({ bottom: 20 });
+
+        Button('登录/注册')
+          .onClick(() => router.push({ url: 'pages/UserLogin' })) // 跳转到登录/注册页面
+          .backgroundColor(Color.Blue)
+          .width('60%')
+          .height(50)
+          .margin({ top: 20 });
       }
-      .align(Alignment.Center);
+      .align(Alignment.Center)
+      .padding(20);
     }else Column() {
       // 用户头像和基本信息
       Column() {
         Image(this.user.imgURL || $r('app.media.ic_user'))
-          .width("50vh")
-          .height("50vh")
+          .width("200px")
+          .height("200px")
           .objectFit(ImageFit.Cover)
           .borderRadius("20px")
           .margin({ bottom: 10 });

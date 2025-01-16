@@ -2,6 +2,7 @@ import { GlobalContext } from '../../viewmodel/GlobalContext';
 import { http } from '@kit.NetworkKit';
 
 export interface UserObj {
+  id: number,
   username: string;
   role: string;
   imgURL: string;
@@ -25,10 +26,16 @@ interface httpResult {
   data: UserObj;
 }
 
+interface registerResult {
+  code: number;
+  msg: string;
+  data: null;
+}
+
 export async function fetchUserProfile(): Promise<UserObj> {
   const userId = GlobalContext.getContext().getObject('id'); // 获取用户 ID
 
-  const url = 'https://your-backend-api.com/user/profile';
+  const url = 'https://your-backend-api.com/user/profile'; // TODO
   const httpRequest = http.createHttp();
   const response = await httpRequest.request(url, {
     method: http.RequestMethod.POST,
@@ -65,4 +72,61 @@ export async function fetchUserProfile(): Promise<UserObj> {
     console.error('Error parsing user profile data:', error);
     throw new Error('Invalid response format.');
   }
+}
+
+export function loginService(username: string, password: string): Promise<void> {
+  const url = 'https://your-backend-api.com/login'; // TODO
+
+  const httpRequest = http.createHttp();
+  return httpRequest.request(url, {
+    method: http.RequestMethod.POST,
+    header: {
+      'Content-Type': 'application/json',
+    },
+    extraData: {
+      username: username,
+      password: password,
+    },
+    connectTimeout: 5000,
+    readTimeout: 5000,
+  }).then((response) => {
+    if (response.responseCode !== 200) {
+      throw new Error('Login failed');
+    }
+
+    const result : httpResult = JSON.parse(response.result as string);
+    if (result.code !== 200) {
+      throw new Error(result.msg || 'Login failed');
+    }
+
+    // 假设需要保存用户信息到全局上下文
+    GlobalContext.getContext().setObject('id', result.data.id);
+  });
+}
+
+export function registerService(username: string, password: string): Promise<void> {
+  const url = 'https://your-backend-api.com/register'; // TODO
+
+  const httpRequest = http.createHttp();
+  return httpRequest.request(url, {
+    method: http.RequestMethod.POST,
+    header: {
+      'Content-Type': 'application/json',
+    },
+    extraData: {
+      username: username,
+      password: password,
+    },
+    connectTimeout: 5000,
+    readTimeout: 5000,
+  }).then((response) => {
+    if (response.responseCode !== 200) {
+      throw new Error('Registration failed');
+    }
+
+    const result : registerResult = JSON.parse(response.result as string);
+    if (result.code !== 200) {
+      throw new Error(result.msg || 'Registration failed');
+    }
+  });
 }
