@@ -75,7 +75,7 @@ export async function fetchUserProfile(): Promise<UserObj> {
 }
 
 export function loginService(username: string, password: string): Promise<void> {
-  const url = 'https://your-backend-api.com/login'; // TODO
+  const url = 'http://127.0.0.1:8080/api/users/login'; // TODO
 
   const httpRequest = http.createHttp();
   return httpRequest.request(url, {
@@ -105,7 +105,21 @@ export function loginService(username: string, password: string): Promise<void> 
 }
 
 export function registerService(username: string, password: string): Promise<void> {
-  const url = 'https://your-backend-api.com/register'; // TODO
+  interface UserDto {
+
+    username: string;
+    password: string;
+
+  }
+
+  // 构建请求体
+  const userDto: UserDto = {
+
+
+    username: username,
+    password: password,
+  };
+  const url = 'http://127.0.0.1:8080/api/users/register'; // TODO
 
   const httpRequest = http.createHttp();
   return httpRequest.request(url, {
@@ -113,10 +127,7 @@ export function registerService(username: string, password: string): Promise<voi
     header: {
       'Content-Type': 'application/json',
     },
-    extraData: {
-      username: username,
-      password: password,
-    },
+    extraData: JSON.stringify(userDto),
     connectTimeout: 5000,
     readTimeout: 5000,
   }).then((response) => {
