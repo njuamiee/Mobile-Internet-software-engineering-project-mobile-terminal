@@ -66,6 +66,7 @@ struct LoginPage {
         .onClick(() => this.login())
         .backgroundColor(Color.Blue)
         .fontSize(18)
+        .margin({left: 32})
         .width('80%')
         .height(50)
         .alignSelf(ItemAlign.Center);
@@ -73,7 +74,7 @@ struct LoginPage {
       // 注册按钮
       Text('还没有账号？')
         .fontSize(16)
-        .margin({ top: 20 });
+        .margin({ top: 20, left: 30 });
 
       Button('注册')
         .onClick(() => router.push({ url: 'pages/UserRegister' })) // 跳转到注册页
@@ -82,7 +83,7 @@ struct LoginPage {
         .width('60%')
         .height(40)
         .alignSelf(ItemAlign.Center)
-        .margin({ top: 10 });
+        .margin({ top: 10, left: 30 });
     }
     .align(Alignment.Center)
     .padding(20);

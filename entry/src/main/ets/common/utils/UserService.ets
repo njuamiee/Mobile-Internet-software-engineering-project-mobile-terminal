@@ -16,6 +16,11 @@ export interface UserObj {
   createCommentList: number[];
 }
 
+interface UserDto {
+  username: string;
+  password: string;
+}
+
 /**
  * Fetches the user profile using HTTP POST request.
  * @returns A promise that resolves with the user profile data.
@@ -35,7 +40,7 @@ interface registerResult {
 export async function fetchUserProfile(): Promise<UserObj> {
   const userId = GlobalContext.getContext().getObject('id'); // 获取用户 ID
 
-  const url = 'https://192.168.1.6:8080/api/users'; // TODO
+  const url = 'https://192.168.40.1:8080/api/users'; // TODO
   const httpRequest = http.createHttp();
   const response = await httpRequest.request(url, {
     method: http.RequestMethod.POST,
@@ -75,7 +80,12 @@ export async function fetchUserProfile(): Promise<UserObj> {
 }
 
 export function loginService(username: string, password: string): Promise<void> {
-  const url = 'http://192.168.1.6:8080/api/users/login'; // TODO
+  // 构建请求体
+  const userDto: UserDto = {
+    username: username,
+    password: password,
+  };
+  const url = 'http://192.168.40.1:8080/api/users/login'; // TODO
 
   const httpRequest = http.createHttp();
   return httpRequest.request(url, {
@@ -83,10 +93,7 @@ export function loginService(username: string, password: string): Promise<void> 
     header: {
       'Content-Type': 'application/json',
     },
-    extraData: {
-      username: username,
-      password: password,
-    },
+    extraData: JSON.stringify(userDto),
     connectTimeout: 5000,
     readTimeout: 5000,
   }).then((response) => {
@@ -105,21 +112,12 @@ export function loginService(username: string, password: string): Promise<void> 
 }
 
 export function registerService(username: string, password: string): Promise<void> {
-  interface UserDto {
-
-    username: string;
-    password: string;
-
-  }
-
   // 构建请求体
   const userDto: UserDto = {
-
-
     username: username,
     password: password,
   };
-  const url = 'http://192.168.1.6:8080/api/users/register'; // TODO
+  const url = 'http://192.168.40.1:8080/api/users/register'; // TODO
 
   const httpRequest = http.createHttp();
   return httpRequest.request(url, {
@@ -131,13 +129,13 @@ export function registerService(username: string, password: string): Promise<voi
     connectTimeout: 5000,
     readTimeout: 5000,
   }).then((response) => {
-    if (response.responseCode !== 200) {
-      throw new Error('Registration failed');
-    }
-
-    const result : registerResult = JSON.parse(response.result as string);
-    if (result.code !== 200) {
-      throw new Error(result.msg || 'Registration failed');
-    }
+    // if (response.responseCode !== 200) {
+    //   throw new Error('Registration failed');
+    // }
+    //
+    // const result : registerResult = JSON.parse(response.result as string);
+    // if (result.code !== 200) {
+    //   throw new Error(result.msg || 'Registration failed');
+    // }
   });
 }

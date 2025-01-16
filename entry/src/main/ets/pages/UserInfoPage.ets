@@ -14,6 +14,7 @@ struct UserProfilePage {
   @State user: UserObj | null = null;
   /* 打的桩:
 {
+    id: 1,
     username: "123",
     role: "hhh",
     imgURL: "",
@@ -59,14 +60,14 @@ struct UserProfilePage {
         Text('请登录以查看您的个人信息')
           .fontSize(20)
           .fontWeight(FontWeight.Bold)
-          .margin({ bottom: 20 });
+          .margin({ bottom: 20, left: 48, top: "30%" });
 
         Button('登录/注册')
           .onClick(() => router.push({ url: 'pages/UserLogin' })) // 跳转到登录/注册页面
           .backgroundColor(Color.Blue)
           .width('60%')
           .height(50)
-          .margin({ top: 20 });
+          .margin({ top: 20, left: 45 });
       }
       .align(Alignment.Center)
       .padding(20);
@@ -113,7 +114,7 @@ struct UserProfilePage {
       Button('返回')
         .onClick(() => router.back())
         .backgroundColor(Color.Blue)
-        .width('80%')
+        .width('100%')
         .height(50)
         .alignSelf(ItemAlign.Center)
         .margin({ top: 20 });

@@ -27,7 +27,7 @@ struct RegisterPage {
       .then(() => {
         this.isRegistering = false;
         showToast('注册成功');
-        router.replace({ url: 'pages/LoginPage' }); // 注册成功后跳转到登录页
+        router.back();
       })
       .catch(() => {
         this.isRegistering = false;
@@ -86,21 +86,22 @@ struct RegisterPage {
         .fontSize(18)
         .width('80%')
         .height(50)
+        .margin({left: 32})
         .alignSelf(ItemAlign.Center);
 
       // 返回登录按钮
       Text('已有账号？')
         .fontSize(16)
-        .margin({ top: 20 });
+        .margin({ top: 20, left: 30 });
 
       Button('返回登录')
-        .onClick(() => router.replace({ url: 'pages/LoginPage' })) // 跳转到登录页面
+        .onClick(() => router.back())
         .backgroundColor(Color.Gray)
         .fontSize(16)
         .width('60%')
         .height(40)
         .alignSelf(ItemAlign.Center)
-        .margin({ top: 10 });
+        .margin({ top: 10, left: 30 });
     }
     .align(Alignment.Center)
     .padding(20);
