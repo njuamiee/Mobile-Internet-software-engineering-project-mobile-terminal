@@ -35,7 +35,7 @@ interface registerResult {
 export async function fetchUserProfile(): Promise<UserObj> {
   const userId = GlobalContext.getContext().getObject('id'); // 获取用户 ID
 
-  const url = 'https://your-backend-api.com/user/profile'; // TODO
+  const url = 'https://192.168.1.6:8080/api/users'; // TODO
   const httpRequest = http.createHttp();
   const response = await httpRequest.request(url, {
     method: http.RequestMethod.POST,
