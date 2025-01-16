@@ -15,8 +15,9 @@
 
 import { fileIo } from '@kit.CoreFileKit';
 import { request } from '@kit.BasicServicesKit';
-import { picker } from '@kit.CoreFileKit';
+
 import Constants, { ContentType, RequestMethod, UploadingState } from '../constants/Constants';
+import { photoAccessHelper } from '@kit.MediaLibraryKit';
 import ResponseResult from '../../viewmodel/ResponseResult';
 import Logger from './Logger';
 import { showToast } from './ToastUtil';
@@ -27,10 +28,10 @@ import { showToast } from './ToastUtil';
  * @returns uri The uri for the selected file.
  */
 export async function fileSelect(): Promise<string> {
-  let photoSelectOptions = new picker.PhotoSelectOptions();
-  photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_TYPE;
+  let photoSelectOptions = new photoAccessHelper.PhotoSelectOptions();
+  photoSelectOptions.MIMEType = photoAccessHelper.PhotoViewMIMETypes.IMAGE_TYPE;
   photoSelectOptions.maxSelectNumber = 1;
-  let photoPicker = new picker.PhotoViewPicker();
+  let photoPicker = new photoAccessHelper.PhotoViewPicker();
   try {
     let photoSelectResult = await photoPicker.select(photoSelectOptions);
     if (photoSelectResult && photoSelectResult.photoUris && photoSelectResult.photoUris.length > 0) {

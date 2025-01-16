@@ -15,7 +15,7 @@ export default class Constants {
   /**
    * The host address of the server.
    */
-  static readonly SERVER: string = 'http://172.20.0.1:9588';
+  static readonly SERVER: string = 'http://127.0.0.1:8080';
 
   /**
    * Get the news type.
@@ -155,7 +155,7 @@ export default class Constants {
   /**
    * Release title.
    */
-  static readonly RELEASE_TITLE: string = '备忘录发布';
+  static readonly RELEASE_TITLE: string = '发布你的新闻';
 }
 
 /**
