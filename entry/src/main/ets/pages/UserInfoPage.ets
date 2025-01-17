@@ -14,22 +14,6 @@ import { GlobalContext } from '../viewmodel/GlobalContext';
 @Component
 struct UserProfilePage {
   @State user: UserObj | null = null;
-  /* 打的桩:
-{
-    id: 1,
-    username: "123",
-    role: "hhh",
-    imgURL: "",
-    createTime: "2024-12-11",
-    followList: [],
-    fansList: [],
-    likeNewsList: [],
-    collectNewsList: [],
-    createNewsList: [],
-    likeCommentList: [],
-    createCommentList: []
-  }
- */
 
   aboutToAppear() {
     this.loadUserProfile();
@@ -64,9 +48,17 @@ struct UserProfilePage {
           .width('60%')
           .height(50)
           .margin({ top: 20, left: 45 });
+        Button('返回')
+          .onClick(() => router.back())
+          .backgroundColor(Color.Blue)
+          .width('60%')
+          .height(50)
+          .alignSelf(ItemAlign.Center)
+          .margin({ top: 20, left: 45 });
       }
       .align(Alignment.Center)
       .padding(20);
+
     }else Column() {
       // 用户头像和基本信息
       Column() {
@@ -105,7 +97,7 @@ struct UserProfilePage {
 
       // 返回按钮
       Button('返回')
-        .onClick(() => router.back())
+        .onClick(() => router.replace({url: "pages/MainPage"}))
         .backgroundColor(Color.Blue)
         .width('100%')
         .height(50)
