@@ -17,6 +17,8 @@
  * News list item info.
  */
 export class NewsData {
+
+  id: number = 0;
   /**
    * News list item title.
    */
@@ -32,6 +34,8 @@ export class NewsData {
    * News list item imagesUrl.
    */
   imagesUrl: Array<string> = [""];
+
+  likeCount: number = 0;
 
   /**
    * News list item source.

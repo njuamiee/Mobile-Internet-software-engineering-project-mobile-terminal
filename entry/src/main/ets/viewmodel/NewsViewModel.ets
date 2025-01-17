@@ -19,6 +19,7 @@ import Logger from '../common/utils/Logger';
 import { http } from '@kit.NetworkKit';
 import { data } from '@kit.TelephonyKit';
 import { httpNewResult } from '../common/utils/HTTP';
+import { GlobalContext } from './GlobalContext';
 
 class NewsViewModel {
   /**
@@ -27,7 +28,7 @@ class NewsViewModel {
    * @return NewsData[] newsDataList
    */
   async getNewsList() {
-    const url = 'http://192.168.1.6:8080/api/news/all'; // TODO
+    const url = 'http://192.168.1.22:8080/api/news/all'; // TODO
 
     const httpRequest = http.createHttp();
     try {
@@ -44,10 +45,6 @@ class NewsViewModel {
       if (response.responseCode !== 200) {
         throw new Error('请求失败');
       }
-
-
-
-
         return response;
 
     } catch (error) {
@@ -64,7 +61,7 @@ class NewsViewModel {
    * @returns NewsData[] newsDataList
    */
   uploadNews(newsData: NewsData){
-    const url = 'http://192.168.1.6:8080/api/news/create'; // TODO
+    const url = 'http://192.168.1.22:8080/api/news/create'; // TODO
 
     const httpRequest = http.createHttp();
     return httpRequest.request(url, {
@@ -79,9 +76,35 @@ class NewsViewModel {
       if (response.responseCode != 200) {
         throw new Error('Upload failed');
       }
-
     });
   }
+
+  async likeNews(newsId: string): Promise<void> {
+    const userId = GlobalContext.getContext().getObject("id")?.toString();
+    if (!userId){
+      throw new Error("未登录！");
+    }
+    const url = `http://192.168.1.22:8080/api/users/like/` + newsId + "/" + userId; // TODO
+    const httpRequest = http.createHttp();
+    try {
+      const response = await httpRequest.request(url, {
+        method: http.RequestMethod.POST,
+        header: {
+          'Content-Type': 'application/json',
+        },
+        connectTimeout: 5000,
+        readTimeout: 5000,
+      });
+      console.error(url)
+      if (response.responseCode !== 200) {
+        throw new Error('点赞失败');
+      }
+
+    } catch (error) {
+      throw new Error(`点赞请求异常: ${error instanceof Error ? error.message : '未知错误'}`);
+    }
+  }
+
 }
 
 let newsViewModel = new NewsViewModel();
