@@ -63,7 +63,7 @@ export  async function fetchUserProfile(): Promise<UserObj> {
       throw new Error(result.msg || 'Server error occurred.');
     }
 
-    return result.data;
+    return result.result;
   } catch (error) {
     console.error('Error parsing user profile data:', error);
     throw new Error('Invalid response format.');
@@ -100,7 +100,7 @@ export async  function loginService(username: string, password: string): Promise
     }
 
     // 假设需要保存用户信息到全局上下文//这里有问题
-   /* GlobalContext.getContext().setObject('id', result.data.id);*/
+    GlobalContext.getContext().setObject('id', result.result.id);
   });
 }
 
