@@ -52,7 +52,34 @@ class NewsViewModel {
     }
   }
 
+  async getNewsListType(str:string) {
+    const url = 'http://192.168.1.6:8080/api/news/type/'+str; // TODO
 
+    const httpRequest = http.createHttp();
+    try {
+      const response = await httpRequest.request(url, {
+        method: http.RequestMethod.GET,
+        header: {
+          'Content-Type': 'application/json',
+        },
+        connectTimeout: 5000,
+        readTimeout: 5000,
+      });
+
+      // 确保响应是正确类型
+      if (response.responseCode !== 200) {
+        throw new Error('请求失败');
+      }
+
+
+
+
+      return response;
+
+    } catch (error) {
+      throw new Error(`请求异常: ${error instanceof Error ? error.message : '未知错误'}`);
+    }
+  }
 
   /**
    * Upload news data.
