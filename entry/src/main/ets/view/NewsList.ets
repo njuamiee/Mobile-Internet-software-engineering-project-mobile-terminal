@@ -38,9 +38,7 @@ export default struct NewsList {
         const response: string = JSON.stringify(data.result)
         console.log(JSON.parse(response));
         let res: httpNewResult = JSON.parse(data.result.toString()) as httpNewResult;
-        for (let i = 0; i < res.result.length; i++) {
-          this.newsData.push(res.result[i] as NewsData);
-        }
+        this.newsData = res.result;
       })
       .catch((err: string | Resource) => {
         showToast(err);
