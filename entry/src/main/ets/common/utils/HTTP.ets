@@ -1,6 +1,6 @@
 import {UserObj} from './UserService';
 export interface httpResult {
-  code: number;
+  code: string;
   msg: string;
   data: UserObj;
 }
@@ -10,7 +10,7 @@ export interface UserDto {
 }
 
 export interface registerResult {
-  code: number;
+  code: string;
   msg: string;
   data: null;
 }

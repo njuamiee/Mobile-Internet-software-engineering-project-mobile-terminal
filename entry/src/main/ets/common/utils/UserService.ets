@@ -46,7 +46,7 @@ export  async function fetchUserProfile(): Promise<UserObj> {
     readTimeout: 5000,
   });
 
-  if (response.responseCode !== 200) {
+  if (response.responseCode != 200) {
     console.error('HTTP Error:', response.responseCode, response.result);
     throw new Error('Failed to fetch user profile');
   }
@@ -59,7 +59,7 @@ export  async function fetchUserProfile(): Promise<UserObj> {
     // 解析 JSON 数据
     const result: httpResult = JSON.parse(response.result);
 
-    if (result.code !== 200) {
+    if (result.code != "000") {
       throw new Error(result.msg || 'Server error occurred.');
     }
 
@@ -89,16 +89,17 @@ export async  function loginService(username: string, password: string): Promise
     connectTimeout: 5000,
     readTimeout: 5000,
   }).then((response) => {
-    if (response.responseCode !== 200) {
+    if (response.responseCode != 200) {
       throw new Error('Login failed');
     }
 
     const result : httpResult = JSON.parse(response.result as string);
-    if (result.code !== 200) {
+    if (result.code != "000") {
+
       throw new Error(result.msg || 'Login failed');
     }
 
-    // 假设需要保存用户信息到全局上下文
+    // 假设需要保存用户信息到全局上下文//这里有问题
     GlobalContext.getContext().setObject('id', result.data.id);
   });
 }
@@ -122,14 +123,14 @@ export async  function registerService(username: string, password: string): Prom
     connectTimeout: 5000,
     readTimeout: 5000,
   }).then((response) => {
-    // if (response.responseCode !== 200) {
-    //   throw new Error('Registration failed');
-    // }
-    //
-    // const result : registerResult = JSON.parse(response.result as string);
-    // if (result.code !== 200) {
-    //   throw new Error(result.msg || 'Registration failed');
-    // }
+     if (response.responseCode != 200) {
+       throw new Error('Registration failed');
+     }
+
+     const result : registerResult = JSON.parse(response.result as string);
+     if (result.code != "000") {
+       throw new Error(result.msg || 'Registration failed');
+     }
   });
 }
 
