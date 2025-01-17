@@ -87,13 +87,13 @@ struct UserProfilePage {
       .align(Alignment.Center);
 
       // 用户详情信息
-      Column() {
-        // 确保这些列表是存在且不为 null 或 undefined
-        Text('点赞的新闻: ' + (this.user.likeNewsList?.length || 0)).fontSize(16).margin({ bottom: 5 });
-
-        Text('创建的新闻: ' + (this.user.createNewsList?.length || 0)).fontSize(16).margin({ bottom: 5 });
-      }
-      .padding({ left: 20, right: 20 });
+      // Column() {
+      //   // 确保这些列表是存在且不为 null 或 undefined
+      //   Text('点赞的新闻: ' + (this.user.likeNewsList?.length || 0)).fontSize(16).margin({ bottom: 5 });
+      //
+      //   Text('创建的新闻: ' + (this.user.createNewsList?.length || 0)).fontSize(16).margin({ bottom: 5 });
+      // }
+      // .padding({ left: 20, right: 20 });
 
       // 返回按钮
       Button('返回')
