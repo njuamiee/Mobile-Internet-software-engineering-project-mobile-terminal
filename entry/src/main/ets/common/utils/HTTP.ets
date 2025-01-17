@@ -15,3 +15,18 @@ export interface registerResult {
   msg: string;
   result: null;
 }
+
+export interface GetInfoParams {
+  id: number;
+  username: string;
+  role: string;
+  imgURL: string;
+  createTime: string;
+  followList: never[];
+  fansList: never[];
+  likeNewsList: never[];
+  collectNewsList: never[];
+  createNewsList: never[];
+  likeCommentList: never[];
+  createCommentList: never[];
+}

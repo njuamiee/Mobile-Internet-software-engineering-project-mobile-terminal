@@ -10,19 +10,6 @@ struct LoginPage {
   @State password: string = '';
   @State isLoggingIn: boolean = false;
 
-   taskpoolExecutelogin(username: string, password: string) {
-  taskpool.execute( loginService, username, password) .then(() => {
-    this.isLoggingIn = false;
-    showToast('登录成功');
-    router.replace({ url: 'pages/UserInfoPage' }); // 登录成功后跳转到用户个人信息页
-  })
-    .catch((err: string) => {
-      console.error("taskPoolTest test occur error: " + err);
-      this.isLoggingIn = false;
-      showToast('登录失败，请检查用户名和密码');
-    });
-}
-
   login() {
     if (!this.username || !this.password) {
       showToast('用户名和密码不能为空');
@@ -31,7 +18,17 @@ struct LoginPage {
 
     this.isLoggingIn = true;
 
-    this.taskpoolExecutelogin(this.username, this.password);
+    loginService(this.username, this.password)
+      .then(() => {
+        this.isLoggingIn = false;
+        showToast('登录成功');
+        router.replace({ url: 'pages/UserInfoPage' }); // 登录成功后跳转到用户个人信息页
+      })
+      .catch((err: string) => {
+        console.error("Login failed: " + err);
+        this.isLoggingIn = false;
+        showToast('登录失败，请检查用户名和密码');
+      });
   }
 
   build() {

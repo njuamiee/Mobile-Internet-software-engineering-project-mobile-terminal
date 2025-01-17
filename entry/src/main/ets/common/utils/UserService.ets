@@ -1,7 +1,7 @@
 import { GlobalContext } from '../../viewmodel/GlobalContext';
 import { http } from '@kit.NetworkKit';
 
-import {httpResult,registerResult,UserDto} from './HTTP';
+import {httpResult,registerResult,UserDto, GetInfoParams} from './HTTP';
 
 export interface UserObj {
   id: number,
@@ -26,31 +26,44 @@ export interface UserObj {
  */
 
 
-
-@Concurrent
 export  async function fetchUserProfile(): Promise<UserObj> {
-  const userId = GlobalContext.getContext().getObject('id'); // 获取用户 ID
-
-  const url = 'https://192.168.1.6:8080/api/users/Info'; // TODO
+  const userId : string | undefined = GlobalContext.getContext().getObject('id')?.toString(); // 获取用户 ID
+  console.error(userId)
+  let id = 0;
+  if (userId) {
+    id = parseInt(userId);
+  }
+  const user: GetInfoParams = {
+    id: id,
+    username: "123",
+    role: "hhh",
+    imgURL: "",
+    createTime: "2024-12-11",
+    followList: [],
+    fansList: [],
+    likeNewsList: [],
+    collectNewsList: [],
+    createNewsList: [],
+    likeCommentList: [],
+    createCommentList: []
+  };
+  const url = 'https://192.168.1.22:8080/api/users/info'; // TODO
   const httpRequest = http.createHttp();
+  console.error("hhhhhhhh")
   const response = await httpRequest.request(url, {
     method: http.RequestMethod.POST,
     header: {
       'Content-Type': 'application/json',
       /*Authorization: `Bearer ${GlobalContext.getContext().getObject('authToken')}`,*/
     },
-    extraData: {
-      id: userId,
-    },
+    extraData: JSON.stringify(user),
     connectTimeout: 5000,
     readTimeout: 5000,
   });
-
   if (response.responseCode != 200) {
     console.error('HTTP Error:', response.responseCode, response.result);
     throw new Error('Failed to fetch user profile');
   }
-
   try {
     if (typeof response.result !== 'string') {
       throw new Error('Invalid response format: result is not a string');
@@ -62,7 +75,6 @@ export  async function fetchUserProfile(): Promise<UserObj> {
     if (result.code != "000") {
       throw new Error(result.msg || 'Server error occurred.');
     }
-
     return result.result;
   } catch (error) {
     console.error('Error parsing user profile data:', error);
@@ -70,14 +82,14 @@ export  async function fetchUserProfile(): Promise<UserObj> {
   }
 }
 
-@Concurrent
+
 export async  function loginService(username: string, password: string): Promise<void> {
   // 构建请求体
   const userDto: UserDto = {
     username: username,
     password: password,
   };
-  const url = 'http://192.168.1.6:8080/api/users/login'; // TODO
+  const url = 'http://192.168.1.22:8080/api/users/login'; // TODO
 
   const httpRequest = http.createHttp();
   return await httpRequest.request(url, {
@@ -100,7 +112,9 @@ export async  function loginService(username: string, password: string): Promise
     }
 
     // 假设需要保存用户信息到全局上下文//这里有问题
-    GlobalContext.getContext().setObject('id', result.result.id);
+    console.error(JSON.stringify(result.result));
+    GlobalContext.getContext().setObject('id', result.result.id.toString());
+    GlobalContext.getContext().setObject('user', JSON.stringify(result.result));
   });
 }
 
@@ -111,7 +125,7 @@ export async  function registerService(username: string, password: string): Prom
     username: username,
     password: password,
   };
-  const url = 'http://192.168.1.6:8080/api/users/register'; // TODO
+  const url = 'http://192.168.1.22:8080/api/users/register'; // TODO
 
   const httpRequest = http.createHttp();
   return  await httpRequest.request(url, {
