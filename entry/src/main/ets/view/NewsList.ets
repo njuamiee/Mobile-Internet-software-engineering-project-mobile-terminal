@@ -26,7 +26,7 @@ import { httpNewResult } from '../common/utils/HTTP';
 export default struct NewsList {
   index: number = 0;
   @Watch('changeCategory') @Link currentIndex: number;
-  public newsData: Array<NewsData> = [];
+  @State newsData: Array<NewsData> = [];
 
   changeCategory() {
     if (this.currentIndex !== this.index) {
