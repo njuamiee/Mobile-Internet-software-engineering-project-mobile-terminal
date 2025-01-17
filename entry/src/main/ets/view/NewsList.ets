@@ -21,28 +21,67 @@ import { httpNewResult } from '../common/utils/HTTP';
 
 /**
  * The news list component.
+ *
  */
+
+
+
 @Component
 export default struct NewsList {
   index: number = 0;
   @Watch('changeCategory') @Link currentIndex: number;
   @State newsData: Array<NewsData> = [];
 
+
+   getNewsTypeByIndex(index: number): string | null {
+  switch (index) {
+    case 1:
+      return "DOMESTIC";
+    case 2:
+      return "INTERNATIONAL";
+    case 3:
+      return "ENTERTAINMENT";
+    case 4:
+      return "MILITARY";
+    case 5:
+      return "SPORTS";
+    case 6:
+      return "TECHNOLOGY";
+    default:
+      console.warn(`Invalid index: ${index}`);
+      return null;  // 返回 null 如果索引无效
+  }
+}
+
   changeCategory() {
     if (this.currentIndex !== this.index) {
       return;
     }
+if(this.currentIndex==0) {
+  NewsViewModel.getNewsList()
+    .then((data) => {
+      const response: string = JSON.stringify(data.result)
+      console.log(JSON.parse(response));
+      let res: httpNewResult = JSON.parse(data.result.toString()) as httpNewResult;
+      this.newsData = res.result;
+    })
+    .catch((err: string | Resource) => {
+      showToast(err);
+    });
+}else{
+  const newsType = this.getNewsTypeByIndex(this.currentIndex);
+  NewsViewModel.getNewsListType(newsType as string)
+    .then((data) => {
+      const response: string = JSON.stringify(data.result)
+      console.log(JSON.parse(response));
+      let res: httpNewResult = JSON.parse(data.result.toString()) as httpNewResult;
+      this.newsData = res.result;
+    })
+    .catch((err: string | Resource) => {
+      showToast(err);
+    });
+}
 
-    NewsViewModel.getNewsList()
-      .then((data) => {
-        const response: string = JSON.stringify(data.result)
-        console.log(JSON.parse(response));
-        let res: httpNewResult = JSON.parse(data.result.toString()) as httpNewResult;
-        this.newsData = res.result;
-      })
-      .catch((err: string | Resource) => {
-        showToast(err);
-      });
   }
 
   aboutToAppear() {
