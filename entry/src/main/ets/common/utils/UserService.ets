@@ -31,13 +31,13 @@ export interface UserObj {
 export  async function fetchUserProfile(): Promise<UserObj> {
   const userId = GlobalContext.getContext().getObject('id'); // 获取用户 ID
 
-  const url = 'https://192.168.1.6:8080/api/users'; // TODO
+  const url = 'https://192.168.1.6:8080/api/users/Info'; // TODO
   const httpRequest = http.createHttp();
   const response = await httpRequest.request(url, {
     method: http.RequestMethod.POST,
     header: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${GlobalContext.getContext().getObject('authToken')}`,
+      /*Authorization: `Bearer ${GlobalContext.getContext().getObject('authToken')}`,*/
     },
     extraData: {
       id: userId,
