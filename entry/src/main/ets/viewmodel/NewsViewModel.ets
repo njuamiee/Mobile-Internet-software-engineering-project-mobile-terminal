@@ -46,9 +46,9 @@ class NewsViewModel {
       }
 
 
-      const result: httpNewResult = JSON.parse(response.result as string);
 
-        return result.result;
+
+        return response;
 
     } catch (error) {
       throw new Error(`请求异常: ${error instanceof Error ? error.message : '未知错误'}`);

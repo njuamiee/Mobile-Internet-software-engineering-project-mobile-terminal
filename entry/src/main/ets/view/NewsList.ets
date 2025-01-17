@@ -17,6 +17,7 @@ import { NewsData } from '../viewmodel/NewsData';
 import Constants from '../common/constants/Constants';
 import NewsViewModel from '../viewmodel/NewsViewModel';
 import { showToast } from '../common/utils/ToastUtil';
+import { httpNewResult } from '../common/utils/HTTP';
 
 /**
  * The news list component.
@@ -34,7 +35,12 @@ export default struct NewsList {
 
     NewsViewModel.getNewsList()
       .then((data) => {
-        this.newsData = data;
+        const response: string = JSON.stringify(data.result)
+        console.log(JSON.parse(response));
+        let res: httpNewResult = JSON.parse(data.result.toString()) as httpNewResult;
+        for (let i = 0; i < res.result.length; i++) {
+          this.newsData.push(res.result[i] as NewsData);
+        }
       })
       .catch((err: string | Resource) => {
         showToast(err);
