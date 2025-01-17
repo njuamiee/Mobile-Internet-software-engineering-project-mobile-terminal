@@ -23,12 +23,12 @@ class NewsViewModel {
    *
    * @return NewsData[] newsDataList
    */
-  getNewsList(currentPage: number, pageSize: number): Promise<NewsData[]> {
+  getNewsList(): Promise<NewsData[]> {
     return new Promise(async (resolve: Function, reject: Function) => {
-      let url = `${Constants.SERVER}/${Constants.GET_NEWS_LIST}`;
-      url += '?currentPage=' + currentPage + '&pageSize=' + pageSize;
+      let url = `${Constants.SERVER}/api/news`;
+
       httpRequestGet(url).then((data: ResponseResult) => {
-        if (data.code === Constants.SERVER_CODE_SUCCESS) {
+        if (data.code === "000") {
           resolve(data.data);
         } else {
           Logger.error('getNewsList failed', JSON.stringify(data));

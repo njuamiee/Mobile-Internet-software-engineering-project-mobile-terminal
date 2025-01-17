@@ -38,19 +38,14 @@ export default struct NewsList {
     if (this.currentIndex !== this.index) {
       return;
     }
-    this.refreshStore.currentPage = 1;
-    NewsViewModel.getNewsList(this.refreshStore.currentPage, this.refreshStore.pageSize).then((data: NewsData[]) => {
-      this.refreshStore.pageState = PageState.Success;
-      if (data.length === this.refreshStore.pageSize) {
-        this.refreshStore.currentPage++;
-        this.refreshStore.hasMore = true;
-      } else {
-        this.refreshStore.hasMore = false;
-      }
+
+    NewsViewModel.getNewsList().then((data: NewsData[]) => {
+
+
       this.refreshStore.newsData = data;
     }).catch((err: string | Resource) => {
       showToast(err);
-      this.refreshStore.pageState = PageState.Fail;
+
     });
   }
 
@@ -60,38 +55,28 @@ export default struct NewsList {
   }
 
   reloadAction() {
-    this.refreshStore.pageState = PageState.Loading;
+
     this.changeCategory();
   }
 
   build() {
     Column() {
-      if (this.refreshStore.pageState === PageState.Loading) {
-        LoadingLayout()
-      } else if (this.refreshStore.pageState === PageState.Success) {
-        this.ListLayout()
-      } else {
+
         FailureLayout({ reloadAction: () => {
           this.reloadAction();
         } })
-      }
+
     }
     .width(Constants.FULL_PERCENT)
     .height(Constants.FULL_PERCENT)
     .justifyContent(FlexAlign.Center)
-    .onTouch((event?: TouchEvent) => {
-      if (event) {
-        if (this.refreshStore.pageState === PageState.Success) {
-          this.refreshStore.listTouchEvent(event);
-        }
-      }
-    })
+
   }
 
   @Builder ListLayout() {
     List({ space: Constants.LIST_SPACE }) {
       ListItem() {
-        RefreshLayout({ refreshLoadingClass: this.refreshStore.refreshLayoutClass })
+       RefreshLayout({ refreshLoadingClass: this.refreshStore.refreshLayoutClass })
       }
       ForEach(this.refreshStore.newsData, (item: NewsData) => {
         ListItem() {
@@ -101,11 +86,7 @@ export default struct NewsList {
         .borderRadius($r('app.float.item_border_radius'))
       }, (item: NewsData, index?: number) => JSON.stringify(item) + index)
       ListItem() {
-        if (this.refreshStore.hasMore) {
-          LoadMoreLayout({ loadMoreLayoutClass: this.refreshStore.loadingMoreClass })
-        } else {
-          NoMoreLayout()
-        }
+
       }
     }
     .width(Constants.FULL_PERCENT)
@@ -113,10 +94,6 @@ export default struct NewsList {
     .padding({ left: $r('app.float.common_padding'), right: $r('app.float.common_padding') })
     .backgroundColor($r('app.color.listColor'))
     .edgeEffect(EdgeEffect.None)
-    .onScrollIndex((start: number, end: number) => {
-      // Listen to the first index of the current list.
-      this.refreshStore.startIndex = start;
-      this.refreshStore.endIndex = end;
-    })
+
   }
 }
