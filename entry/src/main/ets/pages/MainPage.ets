@@ -46,9 +46,9 @@ struct MainPage {
 
   aboutToAppear() {
     // Request news category.
-    NewsTypeViewModel.getNewsTypeList().then((typeList: NewsTypeBean[]) => {
-      this.tabBarArray = typeList;
-    });
+
+      this.tabBarArray =  NewsTypeViewModel.getDefaultTypeList();
+
   }
 
   onPageShow() {

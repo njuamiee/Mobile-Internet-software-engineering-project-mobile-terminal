@@ -85,6 +85,28 @@ struct NewsEditPage {
       Navigation() {
         Column() {
           Column() {
+            //下拉框组件
+            Select([
+              { value: '国内'},
+              { value: '国际'},
+              { value: '娱乐'},
+              { value: '军事'},
+              { value: '体育'},
+              { value: '科技'}
+            ]).selected(0)  //默认选择的城市
+              .value('请选择新闻类型,默认国内') //提示文本
+              .font({size:10, weight: FontWeight.Medium})
+              .onSelect((index,value) =>{
+                console.log('选择的类型：' + value)
+              })
+
+              .margin({ bottom: $r('app.float.normal_padding') })
+
+            Divider()
+              .opacity($r('app.float.divider_opacity'))
+              .color($r('app.color.title_color'))
+              .width(Constants.DIVIDER_WIDTH)
+
             TextInput({ placeholder: $r('app.string.title_default_text') })
               .fontSize($r('app.float.title_font'))
               .placeholderFont({ size: $r('app.float.title_font') })
@@ -123,6 +145,12 @@ struct NewsEditPage {
             .width(Constants.FULL_PERCENT)
             .scrollable(ScrollDirection.Horizontal)
             .align(Alignment.Start)
+
+
+
+
+
+
           }
           .borderRadius($r('app.float.edit_view_radius'))
           .backgroundColor(Color.White)

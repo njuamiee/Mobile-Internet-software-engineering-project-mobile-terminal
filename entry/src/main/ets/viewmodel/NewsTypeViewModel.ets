@@ -34,7 +34,7 @@ class NewsTypeViewModel {
    *
    * @return NewsTypeBean[] newsTypeList
    */
-  getNewsTypeList(): Promise<NewsTypeBean[]> {
+ /* getNewsTypeList(): Promise<NewsTypeBean[]> {
     return new Promise((resolve: Function) => {
       let url = `${Constants.SERVER}/${Constants.GET_NEWS_TYPE}`;
       httpRequestGet(url).then((data: ResponseResult) => {
@@ -47,7 +47,7 @@ class NewsTypeViewModel {
         resolve(DEFAULT_NEWS_TYPES);
       });
     });
-  }
+  }*/
 
   /**
    * Get default news type list.
