@@ -12,18 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import NewsItem from './NewsItem';
-import LoadMoreLayout from './LoadMoreLayout';
-import RefreshLayout from './RefreshLayout';
 import { NewsData } from '../viewmodel/NewsData';
-import Constants, { PageState } from '../common/constants/Constants';
+import Constants from '../common/constants/Constants';
 import NewsViewModel from '../viewmodel/NewsViewModel';
 import { showToast } from '../common/utils/ToastUtil';
-import FailureLayout from './FailureLayout';
-import LoadingLayout from './LoadingLayout';
-import NoMoreLayout from './NoMoreLayout';
-import RefreshListViewModel from '../viewmodel/RefreshListViewModel';
 
 /**
  * The news list component.
@@ -32,68 +25,50 @@ import RefreshListViewModel from '../viewmodel/RefreshListViewModel';
 export default struct NewsList {
   index: number = 0;
   @Watch('changeCategory') @Link currentIndex: number;
-  @State refreshStore: RefreshListViewModel = new RefreshListViewModel();
+  public newsData: Array<NewsData> = [];
 
   changeCategory() {
     if (this.currentIndex !== this.index) {
       return;
     }
 
-    NewsViewModel.getNewsList().then((data: NewsData[]) => {
-
-
-      this.refreshStore.newsData = data;
-    }).catch((err: string | Resource) => {
-      showToast(err);
-
-    });
+    NewsViewModel.getNewsList()
+      .then((data) => {
+        this.newsData = data;
+      })
+      .catch((err: string | Resource) => {
+        showToast(err);
+      });
   }
 
   aboutToAppear() {
-    // Load data.
-    this.changeCategory();
-  }
-
-  reloadAction() {
-
+    // Load data on appearance
     this.changeCategory();
   }
 
   build() {
     Column() {
-
-        FailureLayout({ reloadAction: () => {
-          this.reloadAction();
-        } })
-
+      // Main layout for displaying news items
+      this.ListLayout();
     }
     .width(Constants.FULL_PERCENT)
     .height(Constants.FULL_PERCENT)
-    .justifyContent(FlexAlign.Center)
-
+    .justifyContent(FlexAlign.Center);
   }
 
   @Builder ListLayout() {
     List({ space: Constants.LIST_SPACE }) {
-      ListItem() {
-       RefreshLayout({ refreshLoadingClass: this.refreshStore.refreshLayoutClass })
-      }
-      ForEach(this.refreshStore.newsData, (item: NewsData) => {
+      ForEach(this.newsData, (item: NewsData) => {
         ListItem() {
-          NewsItem({ newsData: item })
+          NewsItem({ newsData: item });
         }
         .backgroundColor($r('app.color.white'))
-        .borderRadius($r('app.float.item_border_radius'))
-      }, (item: NewsData, index?: number) => JSON.stringify(item) + index)
-      ListItem() {
-
-      }
+        .borderRadius($r('app.float.item_border_radius'));
+      }, (item: NewsData, index?: number) => JSON.stringify(item) + index);
     }
     .width(Constants.FULL_PERCENT)
     .height(Constants.FULL_PERCENT)
     .padding({ left: $r('app.float.common_padding'), right: $r('app.float.common_padding') })
-    .backgroundColor($r('app.color.listColor'))
-    .edgeEffect(EdgeEffect.None)
-
+    .backgroundColor($r('app.color.listColor'));
   }
 }

@@ -54,19 +54,7 @@ export default struct NewsItem {
         .fontWeight(Constants.DESC_FONT_WEIGHT)
         .textOverflow({ overflow: TextOverflow.Ellipsis })
 
-      Row({ space: Constants.ITEM_IMG_SPACE }) {
-        ForEach((this.newsData.imagesUrl), (itemImg: NewsFile) => {
-          Image(Constants.SERVER + itemImg?.url)
-            .height(Constants.FULL_PERCENT)
-            .aspectRatio(1)
-            .objectFit(ImageFit.Cover)
-            .borderRadius($r('app.float.item_img_border_radius'))
-        }, (itemImg: NewsFile) => JSON.stringify(itemImg))
-      }
-      .clip(true)
-      .width(Constants.FULL_PERCENT)
-      .height($r('app.float.item_img_size'))
-      .margin({ top: $r('app.float.common_padding') })
+
 
       Text(this.newsData?.source)
         .fontSize($r('app.float.source_font'))

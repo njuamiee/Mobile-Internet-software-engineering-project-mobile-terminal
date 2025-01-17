@@ -57,7 +57,7 @@ export async function fileSelect(): Promise<string> {
  * @param fileUri The local storage path of the file.
  * @returns the promise returned by the function.
  */
-export function fileUpload(context: Context, fileUri: string): Promise<ResponseResult> {
+/*export function fileUpload(context: Context, fileUri: string): Promise<ResponseResult> {
   // Obtaining the Application File Path.
   let cacheDir = context.cacheDir;
   let imgName = fileUri.split('/').pop() + '.jpg';
@@ -115,4 +115,4 @@ export function fileUpload(context: Context, fileUri: string): Promise<ResponseR
       reject(serverData);
     }
   })
-}
+}*/

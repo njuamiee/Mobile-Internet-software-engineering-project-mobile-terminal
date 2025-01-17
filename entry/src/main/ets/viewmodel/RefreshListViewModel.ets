@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/*
 import { promptAction } from '@kit.ArkUI';
 import Constants, { RefreshConstant, RefreshState } from '../common/constants/Constants';
 import NewsViewModel from './NewsViewModel';
@@ -88,8 +88,8 @@ export default class RefreshListViewModel {
       this.offsetY = vp2px(Constants.CUSTOM_LAYOUT_HEIGHT);
       this.pullRefreshState(RefreshState.Refreshing);
       setTimeout(() => {
-        NewsViewModel.getNewsList().then((data: NewsData[]) => {
-          this.newsData = data;
+        NewsViewModel.getNewsList().then((data) => {
+          this.newsData = data as NewsData[];
           this.closeRefresh(true);
         }).catch((errMsg: string | Resource) => {
           promptAction.showToast({ message: errMsg });
@@ -156,4 +156,4 @@ export default class RefreshListViewModel {
       });
     }, this.isCanRefresh ? Constants.DELAY_ANIMATION_DURATION : 0);
   }
-}
+}*/

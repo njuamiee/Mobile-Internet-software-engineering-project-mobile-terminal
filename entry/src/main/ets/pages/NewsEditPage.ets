@@ -15,7 +15,7 @@
 
 import { router } from '@kit.ArkUI';
 import Constants from '../common/constants/Constants';
-import { fileSelect, fileUpload } from '../common/utils/FileUtil';
+import { fileSelect,  } from '../common/utils/FileUtil';
 import { NewsFile, NewsData } from '../viewmodel/NewsData';
 import NewsViewModel from '../viewmodel/NewsViewModel';
 import { showToast } from '../common/utils/ToastUtil';
@@ -31,52 +31,44 @@ import { GlobalContext } from '../viewmodel/GlobalContext';
 struct NewsEditPage {
   title: string = '';
   content: string = '';
-  @State imageUri: string = '';
-  @State isUploading: boolean = false;
+  type: string = '国内';
 
-  selectImage() {
-    fileSelect().then((uri: string) => {
-      this.imageUri = uri || '';
-    });
-  }
+
+
+
 
   uploadNewsData() {
+    // 检查标题是否为空
     if (this.title === '') {
       showToast($r('app.string.prompt_no_title'));
       return;
     }
+
+    // 检查内容是否为空
     if (this.content === '') {
       showToast($r('app.string.prompt_no_content'));
       return;
     }
-    if (this.imageUri === '') {
-      showToast($r('app.string.prompt_no_file'));
-      return;
-    }
-    this.isUploading = true;
-    let serverData = fileUpload(getContext(this), this.imageUri);
-    serverData.then((data: ResponseResult) => {
-      let imageUrl = data.data;
-      let newsFile = new NewsFile();
-      newsFile.id = 0;
-      newsFile.url = imageUrl;
-      newsFile.type = 0;
-      newsFile.newsId = 0;
-      let newsData: NewsData = new NewsData();
-      newsData.title = this.title;
-      newsData.content = this.content;
-      newsData.imagesUrl = [newsFile];
-      NewsViewModel.uploadNews(newsData).then(() => {
-        this.isUploading = false;
-        GlobalContext.getContext().setObject('isBackRouter', true);
-        router.back();
-      }).catch(() => {
-        this.isUploading = false;
-        showToast($r('app.string.upload_error_message'));
-      });
+    this.handleNewsUpload();
+
+  }
+
+  // 封装处理新闻上传的逻辑
+  handleNewsUpload() {
+
+
+    let newsData: NewsData = new NewsData();
+    newsData.title = this.title;
+    newsData.content = this.content;
+    newsData.type = this.type;
+    newsData.authorId =  Number(GlobalContext.getContext().getObject('id')) ;
+    NewsViewModel.uploadNews(newsData).then(() => {
+
+      GlobalContext.getContext().setObject('isBackRouter', true);
+      router.back(); // 成功后返回
     }).catch(() => {
-      this.isUploading = false;
-      showToast($r('app.string.upload_error_message'));
+
+      showToast($r('app.string.upload_error_message')); // 上传失败提示
     });
   }
 
@@ -97,7 +89,7 @@ struct NewsEditPage {
               .value('请选择新闻类型,默认国内') //提示文本
               .font({size:10, weight: FontWeight.Medium})
               .onSelect((index,value) =>{
-                console.log('选择的类型：' + value)
+               this.type=value;
               })
 
               .margin({ bottom: $r('app.float.normal_padding') })
@@ -132,22 +124,6 @@ struct NewsEditPage {
               .onChange((value: string) => {
                 this.content = value;
               })
-            Scroll() {
-              Row() {
-                Image(this.imageUri ? this.imageUri : $r('app.media.ic_add_pic'))
-                  .width($r('app.float.img_size'))
-                  .height($r('app.float.img_size'))
-                  .objectFit(ImageFit.Cover)
-                  .onClick(() => this.selectImage())
-              }
-              .padding($r('app.float.common_padding'))
-            }
-            .width(Constants.FULL_PERCENT)
-            .scrollable(ScrollDirection.Horizontal)
-            .align(Alignment.Start)
-
-
-
 
 
 
@@ -176,9 +152,7 @@ struct NewsEditPage {
       .titleMode(NavigationTitleMode.Mini)
       .backgroundColor($r('app.color.listColor'))
 
-      if (this.isUploading) {
-        UploadingLayout()
-      }
+
     }
   }
 }

@@ -22,6 +22,7 @@ export class NewsData {
    */
   title: string = '';
 
+  type: string = '';
   /**
    * News list item content.
    */
@@ -30,12 +31,13 @@ export class NewsData {
   /**
    * News list item imagesUrl.
    */
-  imagesUrl: Array<NewsFile> = [new NewsFile()];
+  imagesUrl: Array<string> = [""];
 
   /**
    * News list item source.
    */
   source: string = '';
+  authorId:number = 0;
 }
 
 /**
@@ -61,5 +63,7 @@ export class NewsFile {
    * News image list item newsId.
    */
   newsId: number = 0;
+
+
 }
 

@@ -16,6 +16,9 @@ import ResponseResult from './ResponseResult';
 import Constants from '../common/constants/Constants';
 import { httpRequestGet, httpRequestPost } from '../common/utils/HttpUtil';
 import Logger from '../common/utils/Logger';
+import { http } from '@kit.NetworkKit';
+import { data } from '@kit.TelephonyKit';
+import { httpNewResult } from '../common/utils/HTTP';
 
 class NewsViewModel {
   /**
@@ -23,23 +26,36 @@ class NewsViewModel {
    *
    * @return NewsData[] newsDataList
    */
-  getNewsList(): Promise<NewsData[]> {
-    return new Promise(async (resolve: Function, reject: Function) => {
-      let url = `${Constants.SERVER}/api/news`;
+  async getNewsList() {
+    const url = 'http://192.168.1.6:8080/api/news/all'; // TODO
 
-      httpRequestGet(url).then((data: ResponseResult) => {
-        if (data.code === "000") {
-          resolve(data.data);
-        } else {
-          Logger.error('getNewsList failed', JSON.stringify(data));
-          reject($r('app.string.page_none_msg'));
-        }
-      }).catch((err: Error) => {
-        Logger.error('getNewsList failed', JSON.stringify(err));
-        reject($r('app.string.http_error_message'));
+    const httpRequest = http.createHttp();
+    try {
+      const response = await httpRequest.request(url, {
+        method: http.RequestMethod.GET,
+        header: {
+          'Content-Type': 'application/json',
+        },
+        connectTimeout: 5000,
+        readTimeout: 5000,
       });
-    });
+
+      // 确保响应是正确类型
+      if (response.responseCode !== 200) {
+        throw new Error('请求失败');
+      }
+
+
+      const result: httpNewResult = JSON.parse(response.result as string);
+
+        return result.result;
+
+    } catch (error) {
+      throw new Error(`请求异常: ${error instanceof Error ? error.message : '未知错误'}`);
+    }
   }
+
+
 
   /**
    * Upload news data.
@@ -47,19 +63,23 @@ class NewsViewModel {
    * @param newsData
    * @returns NewsData[] newsDataList
    */
-  uploadNews(newsData: NewsData): Promise<NewsData[]> {
-    return new Promise((resolve: Function, reject: Function) => {
-      let url = `${Constants.SERVER}/${Constants.UPLOAD_NEWS}`;
-      httpRequestPost(url, newsData).then((result: ResponseResult) => {
-        if (result && result.code === Constants.SERVER_CODE_SUCCESS) {
-          resolve(result.data);
-        } else {
-          reject($r('app.string.upload_error_message'));
-        }
-      }).catch((err: Error) => {
-        Logger.error('uploadNews failed', JSON.stringify(err));
-        reject($r('app.string.upload_error_message'));
-      });
+  uploadNews(newsData: NewsData){
+    const url = 'http://192.168.1.6:8080/api/news/create'; // TODO
+
+    const httpRequest = http.createHttp();
+    return httpRequest.request(url, {
+      method: http.RequestMethod.POST,
+      header: {
+        'Content-Type': 'application/json',
+      },
+      extraData: JSON.stringify(newsData),
+      connectTimeout: 5000,
+      readTimeout: 5000,
+    }).then((response) => {
+      if (response.responseCode != 200) {
+        throw new Error('Upload failed');
+      }
+
     });
   }
 }

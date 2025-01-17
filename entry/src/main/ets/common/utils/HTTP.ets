@@ -1,4 +1,6 @@
+import { NewsData } from '../../viewmodel/NewsData';
 import {UserObj} from './UserService';
+
 export interface httpResult {
   code: string;
   msg: string;
@@ -14,6 +16,13 @@ export interface registerResult {
   code: string;
   msg: string;
   result: null;
+}
+
+export interface httpNewResult {
+  code: string;
+  msg: string;
+  result: NewsData[];
+
 }
 
 export interface GetInfoParams {

@@ -30,7 +30,7 @@ export default class Constants {
   /**
    * Get the news list.
    */
-  static readonly UPLOAD_NEWS: string = 'news/addNews';
+  static readonly UPLOAD_NEWS: string = 'api/news/create';
 
   /**
    * Upload File
