@@ -80,7 +80,7 @@ export async  function loginService(username: string, password: string): Promise
   const url = 'http://192.168.1.6:8080/api/users/login'; // TODO
 
   const httpRequest = http.createHttp();
-  return httpRequest.request(url, {
+  return await httpRequest.request(url, {
     method: http.RequestMethod.POST,
     header: {
       'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ export async  function loginService(username: string, password: string): Promise
     }
 
     // 假设需要保存用户信息到全局上下文//这里有问题
-    GlobalContext.getContext().setObject('id', result.data.id);
+   /* GlobalContext.getContext().setObject('id', result.data.id);*/
   });
 }
 
@@ -114,7 +114,7 @@ export async  function registerService(username: string, password: string): Prom
   const url = 'http://192.168.1.6:8080/api/users/register'; // TODO
 
   const httpRequest = http.createHttp();
-  return httpRequest.request(url, {
+  return  await httpRequest.request(url, {
     method: http.RequestMethod.POST,
     header: {
       'Content-Type': 'application/json',

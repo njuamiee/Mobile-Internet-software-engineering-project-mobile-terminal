@@ -10,13 +10,14 @@ struct LoginPage {
   @State password: string = '';
   @State isLoggingIn: boolean = false;
 
-  taskpoolExecutelogin(username: string, password: string) {
-  taskpool.execute(loginService, username, password) .then(() => {
+   taskpoolExecutelogin(username: string, password: string) {
+  taskpool.execute( loginService, username, password) .then(() => {
     this.isLoggingIn = false;
     showToast('登录成功');
     router.replace({ url: 'pages/UserInfoPage' }); // 登录成功后跳转到用户个人信息页
   })
-    .catch(() => {
+    .catch((err: string) => {
+      console.error("taskPoolTest test occur error: " + err);
       this.isLoggingIn = false;
       showToast('登录失败，请检查用户名和密码');
     });

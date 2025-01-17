@@ -17,7 +17,8 @@ struct RegisterPage {
     showToast('注册成功');
     router.back();
   })
-    .catch(() => {
+    .catch((err: string) => {
+      console.error("taskPoolTest test occur error: " + err);
       this.isRegistering = false;
       showToast('注册失败，请重试');
     });
