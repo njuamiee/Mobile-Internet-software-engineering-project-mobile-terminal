@@ -14,7 +14,7 @@
  */
 
 import { promptAction } from '@kit.ArkUI';
-import Constants, { RefreshState, RefreshConstant, PageState } from '../common/constants/Constants';
+import Constants, { RefreshConstant, RefreshState } from '../common/constants/Constants';
 import NewsViewModel from './NewsViewModel';
 import { NewsData } from './NewsData';
 import RefreshLoadingClass from './RefreshLoadingClass';
@@ -26,20 +26,12 @@ export default class RefreshListViewModel {
   private isRefreshing: boolean = false;
   private isCanRefresh = false;
   private isPullRefreshOperation = false;
-  private isLoading: boolean = false;
-  private isCanLoadMore = false;
-  public startIndex = 0;
-  public endIndex = 0;
+
   public newsData: Array<NewsData> = [];
-  public currentPage: number = 1;
-  public pageSize: number = 4;
-  public offsetY: number = 0;
-  public hasMore: boolean = true;
   public refreshLayoutClass: RefreshLoadingClass = new RefreshLoadingClass($r('app.media.ic_pull_down_refresh'),
     $r('app.string.pull_down_refresh_text'), 0);
-  public loadingMoreClass: RefreshLoadingClass = new RefreshLoadingClass($r('app.media.ic_pull_up_load'),
-    $r('app.string.pull_up_load_text'), 0);
-  public pageState: number = PageState.Loading;
+
+  public offsetY: number = 0;
 
   listTouchEvent(event: TouchEvent) {
     switch (event.type) {
@@ -48,31 +40,23 @@ export default class RefreshListViewModel {
         this.lastMoveY = event.touches[0].y;
         break;
       case TouchType.Move:
-        if (this.isRefreshing || this.isLoading) {
+        if (this.isRefreshing) {
           return;
         }
         let isDownPull = event.touches[0].y - this.lastMoveY > 0;
-        if ((isDownPull || this.isPullRefreshOperation) && !this.isCanLoadMore) {
+        if (isDownPull && !this.isCanRefresh) {
           // Touch move pull refresh.
           this.touchMovePullRefresh(event);
-        } else {
-          // Touch move load more.
-          this.touchMoveLoadMore(event);
         }
         this.lastMoveY = event.touches[0].y;
         break;
-      case TouchType.Cancel:
-        break;
       case TouchType.Up:
-        if (this.isRefreshing || this.isLoading) {
+        if (this.isRefreshing) {
           return;
         }
         if (this.isPullRefreshOperation) {
           // Touch up pull refresh.
           this.touchUpPullRefresh();
-        } else {
-          // Touch up load more.
-          this.touchUpLoadMore();
         }
         break;
       default:
@@ -81,7 +65,7 @@ export default class RefreshListViewModel {
   }
 
   touchMovePullRefresh(event: TouchEvent) {
-    if (this.startIndex === 0) {
+
       this.isPullRefreshOperation = true;
       let height = vp2px(Constants.CUSTOM_LAYOUT_HEIGHT);
       this.offsetY = event.touches[0].y - this.downY;
@@ -96,28 +80,21 @@ export default class RefreshListViewModel {
         this.offsetY = 0;
         this.isPullRefreshOperation = false;
       }
-    }
+
   }
 
   touchUpPullRefresh() {
     if (this.isCanRefresh) {
       this.offsetY = vp2px(Constants.CUSTOM_LAYOUT_HEIGHT);
       this.pullRefreshState(RefreshState.Refreshing);
-      this.currentPage = 1;
       setTimeout(() => {
-        NewsViewModel.getNewsList(this.currentPage, this.pageSize).then((data: NewsData[]) => {
-          if (data.length === this.pageSize) {
-            this.currentPage++;
-            this.hasMore = true;
-          } else {
-            this.hasMore = false;
-          }
+        NewsViewModel.getNewsList().then((data: NewsData[]) => {
           this.newsData = data;
           this.closeRefresh(true);
         }).catch((errMsg: string | Resource) => {
           promptAction.showToast({ message: errMsg });
           this.closeRefresh(false);
-        })
+        });
       }, Constants.DELAY_TIME);
     } else {
       this.closeRefresh(false);
@@ -130,7 +107,7 @@ export default class RefreshListViewModel {
         this.isCanRefresh = false;
         this.isRefreshing = false;
         this.refreshLayoutClass = new RefreshLoadingClass($r('app.media.ic_pull_down_refresh'),
-          $r('app.string.pull_down_refresh_text'), Constants.CUSTOM_LAYOUT_HEIGHT)
+          $r('app.string.pull_down_refresh_text'), Constants.CUSTOM_LAYOUT_HEIGHT);
         break;
       case RefreshState.Release:
         this.refreshLayoutClass.imageSrc = $r('app.media.ic_pull_up_refresh');
@@ -139,7 +116,6 @@ export default class RefreshListViewModel {
         this.isRefreshing = false;
         break;
       case RefreshState.Refreshing:
-        this.offsetY = vp2px(this.refreshLayoutClass.heightValue);
         this.refreshLayoutClass.imageSrc = $r('app.media.ic_pull_up_load');
         this.refreshLayoutClass.textValue = $r('app.string.refreshing_text');
         this.isCanRefresh = true;
@@ -164,14 +140,12 @@ export default class RefreshListViewModel {
 
   closeRefresh(isRefreshSuccess: boolean) {
     setTimeout(() => {
-      let delay = RefreshConstant.DELAY_PULL_DOWN_REFRESH;
       if (this.isCanRefresh) {
         this.pullRefreshState(isRefreshSuccess ? RefreshState.Success : RefreshState.Fail);
-        delay = RefreshConstant.DELAY_SHRINK_ANIMATION_TIME;
       }
       animateTo({
         duration: RefreshConstant.CLOSE_PULL_DOWN_REFRESH_TIME,
-        delay: delay,
+        delay: this.isCanRefresh ? RefreshConstant.DELAY_PULL_DOWN_REFRESH : 0,
         onFinish: () => {
           this.pullRefreshState(RefreshState.DropDown);
           this.refreshLayoutClass.heightValue = 0;
@@ -181,44 +155,5 @@ export default class RefreshListViewModel {
         this.offsetY = 0;
       });
     }, this.isCanRefresh ? Constants.DELAY_ANIMATION_DURATION : 0);
-  }
-
-  touchMoveLoadMore(event: TouchEvent) {
-    if (this.endIndex >= this.newsData.length - 1) {
-      this.offsetY = event.touches[0].y - this.downY;
-      if (Math.abs(this.offsetY) > vp2px(Constants.CUSTOM_LAYOUT_HEIGHT) / 2) {
-        this.isCanLoadMore = true;
-        this.loadingMoreClass.heightValue = Constants.CUSTOM_LAYOUT_HEIGHT;
-        this.offsetY = -vp2px(Constants.CUSTOM_LAYOUT_HEIGHT) + this.offsetY * Constants.Y_OFF_SET_COEFFICIENT;
-      }
-    }
-  }
-
-  touchUpLoadMore() {
-    if (this.isCanLoadMore && this.hasMore) {
-      this.isLoading = true;
-      setTimeout(() => {
-        NewsViewModel.getNewsList(this.currentPage, this.pageSize).then((data: NewsData[]) => {
-          if (data.length === this.pageSize) {
-            this.currentPage++;
-            this.hasMore = true;
-          } else {
-            this.hasMore = false;
-          }
-          this.newsData = this.newsData.concat(data);
-        }).catch((errMsg: string | Resource) => {
-          promptAction.showToast({ message: errMsg });
-        })
-        this.closeLoadMore();
-      }, Constants.DELAY_TIME);
-    } else {
-      this.closeLoadMore();
-    }
-  }
-
-  closeLoadMore() {
-    this.isCanLoadMore = false;
-    this.isLoading = false;
-    this.loadingMoreClass.heightValue = 0;
   }
 }
